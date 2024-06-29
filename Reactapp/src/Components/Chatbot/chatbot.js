@@ -16,7 +16,7 @@ import { TbMessageChatbot } from "react-icons/tb";
 const Chatbox = () => {
   const [messages, setMessages] = useState([
     {
-      text: "Hi there 👋\nHow can I help you today?\nA. Fetch Resume\nB. Document Validation \nC. Link Extraction \n D. NLP",
+      text: "Hi there 👋\nHow can I help you today?\nA. Talent Resourcing\nB. Deep-Doc-Verify \nC. Link Extraction \n D. Chat with Database",
       fromBot: true,
     },
   ]);
@@ -308,7 +308,7 @@ const Chatbox = () => {
           setMessages((prevMessages) => [
             ...prevMessages,
             {
-              text: "Fetching resumes failed sorry for the inconvenience. Please try again.",
+              text: "Talent Resourcing failed sorry for the inconvenience. Please try again.",
               fromBot: false,
             },
           ]);

@@ -47,10 +47,9 @@ const HomePage = () => {
   const words = useMemo(
     () => [
       "Welcome to Talent Harbour Hub!",
-      "Hello Recruiters !!!",
-      // "A Product of Pozent.",
-      "Streamlining Recruitment for Seamless Hiring.",
-      "Chatbot is ready to assist you.",
+      "Hello Recruiters!",
+      "Streamline your hiring process effortlessly",
+      "with our ready-to-assist Chatbot.",
     ],
     []
   );

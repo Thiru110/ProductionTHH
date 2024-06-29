@@ -62,7 +62,7 @@ const Navbar = () => {
     checkDataFR(user.email)
       // .then((response) => response.json())
       .then((res) => {
-        console.log("Fetch Resume response:", res);
+        console.log("Talent Resourcing response:", res);
         if (res.status === "Success") {
           toast.success(res.message);
           navigate("/home/fetchresume", { state: { data: res.data } });
@@ -71,7 +71,7 @@ const Navbar = () => {
         }
       })
       .catch((error) => {
-        console.error("Error during fetch resume request:", error);
+        console.error("Error during Talent Resourcing request:", error);
         toast.error(error.response.data.message);
       });
   };
@@ -98,7 +98,7 @@ const Navbar = () => {
     checkDataDV(user.email)
       // .then((response) => response.json())
       .then((res) => {
-        console.log("Data Validation response:", res);
+        console.log("Deep-Doc-Verify response:", res);
         if (res.status === "Success") {
           toast.success(res.message);
           navigate("/home/validation", { state: { data: res.data } });
@@ -198,7 +198,7 @@ const Navbar = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Fetch Resume
+                    Talent Resourcing
                   </MenuItem>
                   <MenuItem
                     onClick={HandleLinkExtraction}
