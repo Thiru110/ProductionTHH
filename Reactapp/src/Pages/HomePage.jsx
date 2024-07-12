@@ -1,9 +1,7 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { CheckToken } from "../axios/api";
-import { authenticate, logout } from "../Redux/AuthSlice/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 
 const slideUp = keyframes`
@@ -38,8 +36,8 @@ const AnimatedSpan = styled.span`
 `;
 // animation-delay: ${props => props.delay}s;
 const HomePage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
 
   const auth = useSelector((state) => state.auth.isAuthenticated);
   const [visibleWords, setVisibleWords] = useState([]);
@@ -47,34 +45,34 @@ const HomePage = () => {
   const words = useMemo(
     () => [
       "Welcome to Talent Harbour Hub!",
-      "Hello Recruiters!",
+      "Hello Recruiters !!!",
       "Streamline your hiring process effortlessly",
-      "with our ready-to-assist Chatbot.",
+      "with our ready-to-assist chatbot.",
     ],
     []
   );
 
-  useEffect(() => {
-    const token = localStorage.getItem("Token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+  // useEffect(() => {
+  //   const token = localStorage.getItem("Token");
+  //   if (!token) {
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    CheckToken()
-      .then((res) => {
-        if (res.status === "Success") {
-          dispatch(authenticate({ user: res.data }));
-        } else {
-          dispatch(logout());
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        dispatch(logout());
-        navigate("/login");
-      });
-  }, [dispatch, navigate]);
+  //   CheckToken()
+  //     .then((res) => {
+  //       if (res.status === "Success") {
+  //         dispatch(authenticate({ user: res.data }));
+  //       } else {
+  //         dispatch(logout());
+  //         navigate("/login");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       dispatch(logout());
+  //       navigate("/login");
+  //     });
+  // }, [dispatch, navigate]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -99,7 +97,7 @@ const HomePage = () => {
           height: "100%",
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             width: "65%",
             display: "flex",
@@ -107,6 +105,17 @@ const HomePage = () => {
             alignItems: "center",
             paddingLeft: "100px",
             paddingBottom: "130px",
+          }}
+        > */}
+        <Box
+          sx={{
+            width: ["100%", "65%"], // 100% width for small screens, 65% for larger screens
+            display: "flex",
+            justifyContent: "start",
+            alignItems: "center",
+            paddingLeft: ["20px", "100px"], // Smaller padding for small screens
+            paddingBottom: ["20px", "130px"], // Smaller padding for small screens
+            flexDirection: ["column", "row"], // Stack items vertically on small screens
           }}
         >
           <GreetingMessage className="greeting-message">

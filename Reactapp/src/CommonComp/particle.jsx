@@ -45,14 +45,14 @@ const ParticleBg = () => {
           },
           links: {
             enable: true,
-            distance: 150,
+            distance: 200,
             color: "#19f",
-            opacity: 0.2,
+            opacity: 0.1,
             width: 2,
           },
           move: {
             enable: true,
-            speed: 2,
+            speed: 1.5,
             outModes: "bounce",
           },
         },

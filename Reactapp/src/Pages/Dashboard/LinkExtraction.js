@@ -32,6 +32,7 @@ import LastPageIcon from "@mui/icons-material/LastPage";
 import { useTheme } from "@emotion/react";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import PropTypes from "prop-types";
+import { Loader } from "../../CommonComp/LoaderComponent/loader";
 // ! ***
 // Styled component for TableCell
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -137,6 +138,7 @@ const LinkExtraction = () => {
 
   const location = useLocation();
   const { data: jsonData } = location.state || {};
+  const [loading, setLoading] = useState(false);
 
   // ! pagination
   const [page, setPage] = useState(0);
@@ -169,6 +171,7 @@ const LinkExtraction = () => {
   }, [selectedEmail, data]);
 
   const handleSearchClick = async () => {
+    setLoading(true);
     const url = "/link_extracting";
     const params = {
       filters: {
@@ -202,10 +205,13 @@ const LinkExtraction = () => {
     } catch (error) {
       console.error("Error during API call:", error);
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDownload = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.get("/download_links", {
         params: {
@@ -237,6 +243,8 @@ const LinkExtraction = () => {
     } catch (error) {
       console.error("Error downloading file:", error);
       // Optionally display an error message or handle error state
+    } finally {
+      setLoading(false);
     }
   };
   // ! pagination
@@ -429,6 +437,17 @@ const LinkExtraction = () => {
           </TableFooter>
         </Table>
       </TableContainer>
+      {loading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Loader />
+        </div>
+      )}
     </>
   );
 };

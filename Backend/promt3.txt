@@ -100,14 +100,55 @@ Relevant Experience = 19.37% ]
 
 
 Demo Answer :
-Relevant Experience : 19.37% , 
-Must have Experience = 55%, 
-Good to have Experience= 22.5%, 
+Relevant Experience = 19.37%
+Must have Experience = 55%
+Good to have Experience= 22.5%
 
 
 
 Test Question :{utemp_resume}
 Skills_required = {uskillset}
-above is a resume of a candidate i need the following informations from the above given resume namely  the Relevant Experience , must_have Experience , Good_to_have Experience of the candidate, along with the description of the scoring for each using the above mentioned skills:
+above is a resume of a candidate i need the following informations from the above given resume namely  the Relevant Experience , must_have Experience , Good_to_have Experience of the candidate using the above mentioned skills:
     
+
+
+
+
+For each candidate, their relevant ranking is calculated based on three key factors: Relevant Experience, Must Have Experience, and Good to Have Experience. The ranking is determined using the following formula:
+
+- Relevant Experience (RE): Weight = 19.37%
+- Must Have Experience (MHE): Weight = 55%
+- Good to Have Experience (GHE): Weight = 22.5%
+
+The total score is calculated as:
+\[ Total Score = (RE * 19.37%) + (MHE * 55%) + (GHE * 22.5%) \]
+
+Candidate Details and Explanations:
+
+1. Harish Ande (harishpython1283@gmail.com):
+   - Percentage (%): 68.86
+   - Relevant Experience: 19.37% (This candidate has significant relevant experience in the field, which is highly valued.)
+   - Must Have Experience: 55% (The candidate meets the essential criteria required for the job.)
+   - Good to Have Experience: 22.5% (Additional experience that is beneficial but not critical.)
+   Reason for Rank:
+   Harish Ande has a high overall percentage due to a strong balance of relevant, must-have, and good-to-have experience, making him a top candidate.
+
+2. N RANA (nikitarana253@gmail.com):
+   - Percentage (%): 68.79
+   - Relevant Experience: Error (Resource exhausted, please check the quota.)
+   - Must Have Experience: (Not provided due to the error.)
+   - Good to Have Experience: (Not provided due to the error.)
+   Reason for Rank:
+   The ranking for N RANA could not be completed due to an error in fetching the relevant experience data. Please retry later.
+
+3. Tejaswini Venigalla (veni.tejaswini0710@gmail.com):
+   - Percentage (%): 68.25
+   - Relevant Experience: (Value not displayed)
+   - Must Have Experience: (Value not displayed)
+   - Good to Have Experience: (Value not displayed)
+   Reason for Rank:
+   Similar to N RANA, the exact values for Tejaswini's experiences are not displayed, which affects the ranking process.
+
+For other candidates, the rankings are derived similarly based on the weighted scores from their experiences. Errors and missing data points need to be addressed to ensure accurate rankings.
+
     Test Answer :""")

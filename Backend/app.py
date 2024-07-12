@@ -14,7 +14,7 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector as sql
 from flask_cors import CORS
-#from models.web_scraping import scrape_and_process_resumes
+from models.web_scraping import scrape_and_process_resumes
 from models.api_jobdiva import con_data
 from models.testapi import rank_resumes
 from models.func_db import create_tables_if_not_exist
@@ -72,26 +72,21 @@ class UserInfo(db.Model):
     def __repr__(self):
         return f'<UserInfo {self.username}>'
     
-    # !     JWT TOKEN GENERATE FUNCTION
-# def generate_token(user):
-#     token = jwt.encode({
-#         'user_id': user.id,
-#         'username': user.username,
-#         'email': user.email,
-#         'role': user.Role,  # Include user's role
-#         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
-#     }, app.config['SECRET_KEY'], algorithm='HS256')
-#     return token
+    #    JWT TOKEN GENERATE FUNCTION
+
 def generate_token(user):
     payload = {
         'user_id': user.id,
         'username': user.username,
         'email': user.email,
         'role': user.Role,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=12)
     }
     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
     return token.decode('utf-8')  # Directly return the token as string
+
+
+#            USER SIGNUP API
 
 @app.route('/user/signup', methods=['POST'])
 def signup():
@@ -117,6 +112,7 @@ def signup():
 
     token = generate_token(new_user)
     return jsonify({"message": "Success", "token": token}), 200
+
     
 @app.route('/user/signin', methods=['POST'])
 def signin():
@@ -161,7 +157,6 @@ def forgot_password():
     
     return jsonify({"message": "Password updated successfully"}), 200
 
-
 @app.route('/user/auth', methods=['GET'])
 def auth():
     auth_header = request.headers.get('Authorization')
@@ -176,7 +171,8 @@ def auth():
             return jsonify({"status": "Failure", "message": "Invalid token"}), 401
     else:
         return jsonify({"status": "Failure", "message": "Token is missing"}), 401
-    
+
+  
 @app.route('/response', methods=['POST'])
 def get_response():
     global current_node
@@ -257,9 +253,7 @@ def get_validation_details():
         return jsonify({"status":"Failure","message": "Email parameter is missing"}),400
     
     return get_user_role_and_jobs(email,table)
-    
     # !   ----new ------
-
 @app.route('/extract_keywords', methods=['POST'])
 def extract_keywords():
     email = request.form.get('email')
@@ -315,8 +309,10 @@ async def final_con():
     try:
         final_api_rank = await main(results, job_id)
         api_rank = pd.DataFrame(final_api_rank)
- 
+        # if api_rank is not None:
         return redirect(url_for('rank',text=text))
+        # else:
+        #     return jsonify({"status":"Failure", "message":"No resumes found, please edit your Job Description"}), 400
  
     except Exception as e:
         return jsonify({"status": "Error", "message": str(e)}), 500
@@ -332,6 +328,8 @@ def rank():
     #rank_resumes(api_rank, result_df, job_description)
     rank_resumes(api_rank, job_description)
     return jsonify({"status": "Success", "message":f"Your resumes have been fetched. Click {final_job_id} in the dashboard to view your resumes"}),200
+ 
+
 
 @app.route('/fetch_candidates', methods=['POST'])
 def fetch_candidates_by_filters():
@@ -443,9 +441,9 @@ def search():
                 return jsonify({"message": "No results fetched, please modify your prompt",}), 406
 
     if le_jdid is not None:
-        return jsonify({"message": f"Search completed. Please check {le_jdid} in the dashboard to view the results. \nWhat else would you like to do: \nA: Talent Resourcing\nB: Deep-Doc-Verify\nC: Link extraction\nD:Chat with Database", "results": df.to_dict(orient='records')}), 200
+        return jsonify({"message": f"Search completed. Please check {le_jdid} in the dashboard to view the results. \nWhat else would you like to do: \nA: Talent Resourcing\nB: Deep-Doc-Verify\nC: Link Extraction\nD: Chat with Database", "results": df.to_dict(orient='records')}), 200
     else:
-        return jsonify({"message": "Search completed, but no results have been found. Please optimize your query. \nWhat else would you like to do: \nA: Talent Resourcing\nB: Deep-Doc-Verify\nC: Link extraction\nD:Chat with Database", "results": df.to_dict(orient='records')}), 200
+        return jsonify({"message": "Search completed, but no results have been found. Please optimize your query. \nWhat else would you like to do: \nA: Talent Resourcing\nB: Deep-Doc-Verify\nC: Link Extraction\nD: Chat with Database", "results": df.to_dict(orient='records')}), 200
 
 @app.route('/download_links', methods=['GET'])
 def download_links():

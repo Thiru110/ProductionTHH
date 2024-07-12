@@ -40,12 +40,22 @@ def db_retrieve(ID, Name):
 def relative_ranking(resume, skillset):
     try:
         # Read the prompt content from the file
+        # with open(r"promt.txt", 'r', encoding='utf-8') as prompt_file:
+        #     prompt_content = prompt_file.read()
+        
         with open(r"promt.txt", 'r', encoding='utf-8') as prompt_file:
             prompt_content = prompt_file.read()
+        promt_template=r"D:\THH\UpdatedFile\Backend\models\Resume_Harshi T.txt"  
+        template2=r"D:\THH\THH_File\Backend\Resume_Varshini Reddy.txt"
  
         # Create the question with the provided paths and prompt content
+        # question = f"""
+        # Sample: {prompt_content}
+        # Skillset Content: {skillset}\n
+        # Resume Content: {resume}\n
+        # Test Answer:"""
         question = f"""
-        Sample: {prompt_content}
+        Sample: {prompt_content.format(prompt_resume=promt_template, utemp_resume=resume, uskillset=skillset, prompt_resume2=template2)}
         Skillset Content: {skillset}\n
         Resume Content: {resume}\n
         Test Answer:"""

@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 from models.sql import sql_data_push    
+from flask import jsonify
+
 def access_tokens():
     with open("refresh_tokens.txt","r") as token:
         token=token.read()
@@ -15,7 +17,9 @@ def fetch_resume_profile_api(kwords):
     kwords_list=[]
     kwords_list1=[mh_skills.upper() for mh_skills in kwords["must_have"]+kwords["good_to_have"]] #[0:3]]
 
-    if len(kwords_list1)>8:
+    if kwords_list1 is None:
+       return jsonify({"status":"Failure", "message":"No skillsets were extracted, please change your JD"}),500
+    elif len(kwords_list1)>8:
         kwords_list=kwords_list1[0:8]
     else:
         kwords_list=kwords_list1
@@ -35,8 +39,11 @@ def fetch_resume_profile_api(kwords):
     response1=requests.post(fetch_cand_prof_url,headers=headers, json=skillset_to_post)
 
     if response1.status_code == 200:        
-        data = response1.json()        
-        return data
+        data = response1.json()       
+        if data is None:
+            return jsonify({"status":"Failure", "message":"No resumes found, please edit your Job Description"}), 400
+        else:
+            return data
     else:
         print(f"Error: First API request failed with status code {response1.status_code}")
 
@@ -74,7 +81,7 @@ def name_and_email(candi_id):
     if response3.status_code == 200:
         name_email_det = response3.json()            
         for ind in range(len(name_email_det['data'])):
-            cand_name_email[str(name_email_det['data'][ind]['ID'])]=[name_email_det['data'][ind]['FIRSTNAME']+" "+name_email_det['data'][ind]['LASTNAME'], name_email_det['data'][ind]['EMAIL']]        
+            cand_name_email[str(name_email_det['data'][ind]['ID'])]=[name_email_det['data'][ind]['FIRSTNAME']+" "+name_email_det['data'][ind]['LASTNAME'], name_email_det['data'][ind]['EMAIL'], name_email_det['data'][ind]['CELLPHONE']]    
         
         return cand_name_email
     
@@ -106,8 +113,14 @@ def fetch_resume_id_api(resume_ids,names_emails,job_id):
             resume_content = response4_json['data'][1][2].replace("\r\n","")              
         
             if id in names_emails.keys():  
-                result_df = pd.DataFrame({'JOB_ID': [job_id], 'Resume': [resume_content], 'Signature': ['API'], 'Name':[names_emails[id][0]], 'Email':[names_emails[id][1]]}) # 'Similarity': [similarity_percentage]})
-                result_dfs.append(result_df)          
+                if names_emails[id][2] !='':
+                    print(f"IFFF Mobile is ____{names_emails[id][2]}____")
+                    result_df = pd.DataFrame({'JOB_ID': [job_id], 'Resume': [resume_content], 'Signature': ['API'], 'Name':[names_emails[id][0]], 'Email':[names_emails[id][1]], 'Mobile':[names_emails[id][2]]}) # 'Similarity': [similarity_percentage]})
+                    result_dfs.append(result_df)          
+                else:
+                    print(f"ELSEEE Mobile is ____{names_emails[id][2]}____")
+                    result_df = pd.DataFrame({'JOB_ID': [job_id], 'Resume': [resume_content], 'Signature': ['API'], 'Name':[names_emails[id][0]], 'Email':[names_emails[id][1]], 'Mobile':None}) # 'Similarity': [similarity_percentage]})
+                    result_dfs.append(result_df)                 
         
         else:
             return f"Error: Fourth API request failed with status code {response4.status_code}"

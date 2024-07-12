@@ -35,6 +35,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import { useTheme } from "@emotion/react";
 import PropTypes from "prop-types";
+import { Loader } from "../../CommonComp/LoaderComponent/loader";
 
 // const StyledTableCell = styled(TableCell)({
 //   border: "2px solid black",
@@ -154,6 +155,7 @@ const FetchResume = () => {
   const [percentageMap, setPercentageMap] = useState({}); // State to store percentage for each row
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (jsonData) {
@@ -182,6 +184,7 @@ const FetchResume = () => {
 
   // ! for search button api req and add data to the table
   const handleSearchClick = async () => {
+    setLoading(true);
     const url = "/fetch_candidates"; // Ensure the correct protocol is used
     const params = {
       filters: {
@@ -204,9 +207,9 @@ const FetchResume = () => {
 
       const result = response?.data;
 
+      console.log(result?.data);
       if (result.status === "Success") {
         setSearchResults(result?.data);
-        console.log(result?.data);
         toast.success("Data fetched based on your filters");
       } else {
         console.error("Search API call failed:", result.status);
@@ -215,11 +218,14 @@ const FetchResume = () => {
     } catch (error) {
       console.error("Error during API call:", error);
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   // ! in table download button api req
   const handleDownloadClick = async (email) => {
+    setLoading(true);
     const url = `/download_api_resumes?email=${encodeURIComponent(
       email
     )}&jd_id=${encodeURIComponent(selectedJobId)}`;
@@ -242,9 +248,12 @@ const FetchResume = () => {
       window.URL.revokeObjectURL(downloadUrl); // Clean up the URL object
     } catch (error) {
       console.error("Error during download request:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleMailClick = (email, name) => {
+    setLoading(true);
     const url = `/send-invitation?email=${encodeURIComponent(
       email
     )}&name=${encodeURIComponent(name)}`;
@@ -264,9 +273,13 @@ const FetchResume = () => {
         } else {
           toast.error("An unknown error occurred.");
         }
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
-  const handleRelevantExperienceClick = async (name, jobId, email) => {
+  const handleRelevantClick = async (name, jobId, email) => {
+    setLoading(true);
     const url = `/Relevant?name=${encodeURIComponent(
       name
     )}&job_id=${encodeURIComponent(jobId)}`;
@@ -287,6 +300,8 @@ const FetchResume = () => {
     } catch (error) {
       console.error("Error during Relevant Experience API call:", error);
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -407,9 +422,8 @@ const FetchResume = () => {
             <TableRow>
               <StyledTableCell align="center">Name</StyledTableCell>
               <StyledTableCell align="center">Email</StyledTableCell>
-              <StyledTableCell align="center">
-                Percentage&nbsp;(%)
-              </StyledTableCell>
+              <StyledTableCell align="center">Contact</StyledTableCell>
+              <StyledTableCell align="center">Ranking&nbsp;(%)</StyledTableCell>
               <StyledTableCell align="center" colSpan={2}>
                 Actions
               </StyledTableCell>
@@ -418,8 +432,6 @@ const FetchResume = () => {
           </TableHead>
 
           <TableBody>
-            {/* {Array.isArray(searchResults) && searchResults.length > 0 ? (
-              searchResults.map((row, index) => ( */}
             {Array.isArray(searchResults) && searchResults.length > 0 ? (
               (rowsPerPage > 0
                 ? searchResults.slice(
@@ -433,6 +445,7 @@ const FetchResume = () => {
                     {row.Name}
                   </StyledTableCell>
                   <StyledTableCell align="left">{row.Email}</StyledTableCell>
+                  <StyledTableCell align="left">{row.Mobile}</StyledTableCell>
                   <StyledTableCell align="left">
                     {row.Similarity}
                   </StyledTableCell>
@@ -461,7 +474,6 @@ const FetchResume = () => {
                     <Tooltip title="Mail">
                       <ImageButton
                         onClick={() => {
-                          // setSelectedRowEmail(row.Email); // Set the selected row's email
                           handleMailClick(row.Email, row.Name);
                         }}
                       >
@@ -488,7 +500,7 @@ const FetchResume = () => {
                     >
                       <ImageButton
                         onClick={() =>
-                          handleRelevantExperienceClick(
+                          handleRelevantClick(
                             row.Name,
                             selectedJobId,
                             row.Email
@@ -518,104 +530,12 @@ const FetchResume = () => {
               ))
             ) : (
               <TableRow>
-                <StyledTableCell colSpan={6} align="center">
+                <StyledTableCell colSpan={7} align="center">
                   No data available
                 </StyledTableCell>
               </TableRow>
             )}
           </TableBody>
-          {/* <TableBody>
-  {Array.isArray(searchResults) && searchResults.length > 0 ? (
-    (rowsPerPage > 0
-      ? searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      : searchResults
-    ).map((row, index) => (
-      <TableRow key={index}>
-        <StyledTableCell component="th" scope="row">
-          {row.Name}
-        </StyledTableCell>
-        <StyledTableCell align="left">{row.Email}</StyledTableCell>
-        <StyledTableCell align="left">{row.Similarity}</StyledTableCell>
-        <StyledTableCell align="center">
-          <Tooltip title="Download">
-            <ImageButton
-              onClick={async () => {
-                await handleDownloadClick(row.Email);
-              }}
-            >
-              <img
-                src={downloadIcon}
-                alt="Download Icon"
-                style={{
-                  width: "auto",
-                  height: "auto",
-                  maxWidth: "25px",
-                  maxHeight: "25px",
-                }}
-              />
-            </ImageButton>
-          </Tooltip>
-        </StyledTableCell>
-        <StyledTableCell align="center">
-          <Tooltip title="Mail">
-            <ImageButton
-              onClick={() => handleMailClick(row.Email, row.Name)}
-            >
-              <img
-                src={mailIcon}
-                alt="Mail Icon"
-                style={{
-                  width: "auto",
-                  height: "auto",
-                  maxWidth: "25px",
-                  maxHeight: "25px",
-                }}
-              />
-            </ImageButton>
-          </Tooltip>
-        </StyledTableCell>
-        <StyledTableCell align="center">
-          <Tooltip
-            title={
-              selectedJobId !== ""
-                ? ""
-                : "Please fill a Job ID to enable Relevant Ranking"
-            }
-          >
-            <ImageButton
-              onClick={() =>
-                handleRelevantExperienceClick(row.Name, selectedJobId, row.Email)
-              }
-            >
-              <img
-                src={releventBtn}
-                alt="Relevant Experience Icon"
-                style={{
-                  width: "auto",
-                  height: "auto",
-                  maxWidth: "30px",
-                  maxHeight: "25px",
-                }}
-              />
-            </ImageButton>
-          </Tooltip>
-          {percentageMap[row.Email] !== undefined && (
-            <div style={{ marginTop: "5px" }}>
-              {`Relevant Experience: ${percentageMap[row.Email]}`}
-            </div>
-          )}
-        </StyledTableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <StyledTableCell colSpan={6} align="center">
-        No data available
-      </StyledTableCell>
-    </TableRow>
-  )}
-</TableBody> */}
-
           <TableFooter>
             <TableRow>
               <TablePagination
@@ -638,6 +558,17 @@ const FetchResume = () => {
           </TableFooter>
         </Table>
       </TableContainer>
+      {loading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Loader />
+        </div>
+      )}
     </>
   );
 };

@@ -6,33 +6,26 @@ import sendButton from "../../Utils/sendButton.png";
 import { useSelector } from "react-redux";
 import { handleFetchCP } from "../../axios/api";
 import CancelIcon from "@mui/icons-material/Cancel";
-// import bgAI from "../../Utils/bgAI.webp";
-// import bgAI from "../../Utils/bgAI2.jpg";
 import SearchIcon from "../../Utils/SearchIcon.gif";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axios/axiosConfig";
-// import { Loader } from "../../CommonComp/LoaderComponent/loader";
 import { TbMessageChatbot } from "react-icons/tb";
 const Chatbox = () => {
   const [messages, setMessages] = useState([
     {
-      text: "Hi there 👋\nHow can I help you today?\nA. Talent Resourcing\nB. Deep-Doc-Verify \nC. Link Extraction \n D. Chat with Database",
+      text: "Hi there 👋\nHow can I help you today?\nA. Talent Resource\nB. Deep-Doc-Verify \nC. Link Extraction \n D. Chat with Database",
       fromBot: true,
     },
   ]);
   const [isBotLoading, setBotLoading] = useState(false);
   const fileInputRef = useRef(null);
-
-  // *    GETTING USER DETAILS
   const user = useSelector((state) => state.auth.user);
   const userEmail = user.email;
-  // console.log(user.email);
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState();
   const [selectedFileName, setSelectedFileName] = useState(""); // New state variable
   // ! for scroll automatically
   const messagesEndRef = useRef(null);
-
   // Load messages from local storage when again comes
   // ! for scroll automatically
   useEffect(() => {
@@ -64,7 +57,6 @@ const Chatbox = () => {
     }
   }, [messages, selectedFile, selectedFileName]);
 
-  // ?  for again recall the working tree
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (
@@ -75,12 +67,9 @@ const Chatbox = () => {
       handleSend();
     }
   }, [messages]);
-
-  // ?-----------------  WORKING TREE INTEGRATION API CALL ------------------------
   const handleSend = () => {
     const userMessage = input.trim();
     if (userMessage !== "") {
-      //* Add the user message to the chat
       setMessages([
         ...messages,
         {
@@ -88,9 +77,7 @@ const Chatbox = () => {
           fromBot: false,
         },
       ]);
-      //* Clear the input field after sending the message
       setInput("");
-      // generateResponse(messages)
       setBotLoading(true);
       axiosInstance
         .post(
@@ -104,8 +91,6 @@ const Chatbox = () => {
         )
         .then((response) => {
           const botMessage = response.data.message;
-          // botResMessage = botMessage;
-          // Add the bot's response to the chat
           setMessages((prevMessages) => [
             ...prevMessages,
             {
@@ -120,7 +105,6 @@ const Chatbox = () => {
         .finally(() => setBotLoading(false));
     }
   };
-
   const handleSearch = async (input, userEmail) => {
     setBotLoading(true);
     await axiosInstance
@@ -134,7 +118,6 @@ const Chatbox = () => {
         }
       )
       .then((response) => {
-        // handle success
         setInput("");
 
         console.log(response.data);
@@ -151,7 +134,6 @@ const Chatbox = () => {
         ]);
       })
       .catch((error) => {
-        // handle error
         console.error(error);
         toast.error(
           "Please use a more specific query (For eg., include the job role and the university/college you want the candidate from)"
@@ -160,62 +142,6 @@ const Chatbox = () => {
       })
       .finally(() => setBotLoading(false));
   };
-
-  // ! this one is correct
-  // const handleSearch = (input, userEmail) => {
-  //   axiosInstance
-  //     .post("/search", { input, userEmail })
-  //     .then((response) => {
-  //       // handle success
-  //       console.log(response.data);
-  //     })
-  //     .catch((error) => {
-  //       // handle error
-  //       console.error(error);
-  //     });
-  // };
-
-  // const handleSearch = async (input, userEmail) => {
-  //   try {
-  //     const response = await axiosInstance.post("/search", {
-  //       input,
-  //       userEmail,
-  //     });
-
-  //     setMessages((prevMessages) => [
-  //       ...prevMessages,
-  //       {
-  //         text: input,
-  //         fromBot: false,
-  //       },
-  //     ]);
-
-  //     console.log("Search completed successfully", response.data);
-  //     // toast.success("Search completed successfully")
-  //     setMessages((prevMessages) => [
-  //       ...prevMessages,
-  //       {
-  //         text: response.data.message, // Assuming response contains a message field
-  //         fromBot: true,
-  //       },
-  //     ]);
-
-  //     toast.success("Successfully fetched");
-  //   } catch (error) {
-  //     console.error("Error during search:", error);
-
-  //     setMessages((prevMessages) => [
-  //       ...prevMessages,
-  //       {
-  //         text: "An error occurred while processing your request.",
-  //         fromBot: true,
-  //       },
-  //     ]);
-
-  //     toast.error("Error occurred while fetching");
-  //   }
-  // };
-
   const handleFile = (event) => {
     const file = event.target.files[0];
     console.log(file);
@@ -224,19 +150,13 @@ const Chatbox = () => {
       setSelectedFileName(file.name);
     }
   };
-  //! api file contains fetchResume-->upload and copypaste(madhi)
   const handleButtonClick = () => {
-    // Trigger the hidden file input when the button is clicked
     fileInputRef.current.click();
   };
-  // !this is having email and file need to fix the email
-  // const handleImageUpload = async (selectedFile, userEmail) => {
   const handleImageUpload = async (selectedFile) => {
-    //   if (selectedFile && userEmail) {
     if (selectedFile) {
       const formData = new FormData();
       formData.append("file", selectedFile);
-      //     formData.append("email", userEmail);
       setBotLoading(true);
       await axiosInstance
         .post("/docvalidation", formData, {
@@ -248,7 +168,6 @@ const Chatbox = () => {
           setMessages((prevMessages) => [
             ...prevMessages,
             {
-              //! text: "Image uploaded successfully. Please wait while we process your request.",
               text: response?.data,
               fromBot: true,
             },
@@ -309,7 +228,7 @@ const Chatbox = () => {
             ...prevMessages,
             {
               text: "Talent Resourcing failed sorry for the inconvenience. Please try again.",
-              fromBot: false,
+              fromBot: true,
             },
           ]);
           clearFileSelection();
@@ -332,9 +251,6 @@ const Chatbox = () => {
       handleFetchCP(data, userEmail)
         .then((response) => {
           console.log(`copypaste response: ${response}`); // response is the actual data returned
-
-          //!!!!! console.log("File uploaded successfully", response.status);
-
           setMessages((prevMessages) => [
             ...prevMessages,
             {
@@ -401,8 +317,6 @@ const Chatbox = () => {
       >
         <h2 style={{ margin: 0, fontSize: "2rem", color: "white" }}>Zenbot</h2>
       </Box>
-
-      {/* Message container */}
       <Box
         component="ul"
         sx={{
@@ -413,7 +327,6 @@ const Chatbox = () => {
           overflowY: "auto",
         }}
       >
-        {/* bot response msg initialy  */}
         {messages.map((message, index) => (
           <Box
             key={index}
@@ -471,11 +384,8 @@ const Chatbox = () => {
             </Box>
           </Box>
         )}
-        {/* bot message end */}
         <div ref={messagesEndRef} />
       </Box>
-      {/* content Stuct end */}
-      {/* input user send stuct start */}
       <Box
         className="chat-input"
         sx={{
@@ -502,7 +412,6 @@ const Chatbox = () => {
           }}
           disabled={isBotLoading}
         ></textarea>
-
         {messages[messages.length - 1]?.text.toLowerCase() ===
         "please paste your job description...".toLowerCase() ? (
           input.length > 10 ? (
@@ -603,8 +512,6 @@ const Chatbox = () => {
           messages[messages.length - 1].text.toLowerCase() ===
             "upload your file to validate and wait till we process".toLowerCase() ? (
           <>
-            {/* {selectedFile && clearFileSelection()} */}
-
             <input
               type="file"
               ref={fileInputRef}
@@ -623,7 +530,6 @@ const Chatbox = () => {
               <>
                 <Button
                   variant="text"
-                  // onClick={() => handleImageUpload(selectedFile, userEmail)}
                   onClick={() => handleImageUpload(selectedFile)}
                   disabled={isBotLoading}
                 >
@@ -657,144 +563,7 @@ const Chatbox = () => {
             />
           </Button>
         ) : null}
-        {/* {messages[messages.length - 1]?.text.toLowerCase() ===
-        "please paste your job description...".toLowerCase() ? (
-          input.length > 10 ? (
-            <Button
-              variant="text"
-              onClick={async () => await handleFetchCopypaste(input, userEmail)}
-              disabled={isBotLoading}
-            >
-              fetch
-            </Button>
-          ) : input.trim() ? (
-            <Button onClick={handleSend} disabled={isBotLoading}>
-              <img
-                src={sendButton}
-                alt="send"
-                style={{ width: "35px", height: "35px" }}
-              />
-            </Button>
-          ) : null
-        ) : messages[messages.length - 1]?.text.toLowerCase() ===
-          "please upload the job description and wait while we process your request...".toLowerCase() ? (
-          <>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFile}
-              disabled={isBotLoading}
-            />
-            <IconButton color="primary" onClick={handleButtonClick}>
-              <AttachFileIcon />
-            </IconButton>
-            {selectedFile ? (
-              <>
-                <Button
-                  variant="text"
-                  onClick={() => handleFetch(selectedFile, userEmail)}
-                  disabled={isBotLoading}
-                >
-                  fetch
-                </Button>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ color: "green", marginRight: "5px" }}>
-                    {selectedFileName}
-                  </span>
-                  <IconButton
-                    sx={{ width: "10px", height: "10px" }}
-                    onClick={clearFileSelection}
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                </Box>
-              </>
-            ) : null}
-          </>
-        ) : messages[messages.length - 1]?.text.toLowerCase() ===
-          "upload your file to validate and wait till we process".toLowerCase() ? (
-          <>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFile}
-              disabled={isBotLoading}
-            />
-            <IconButton color="primary" onClick={handleButtonClick}>
-              <AttachFileIcon />
-            </IconButton>
-            {selectedFile ? (
-              <>
-                <Button
-                  variant="text"
-                  onClick={() => handleFetch(selectedFile, userEmail)}
-                  disabled={isBotLoading}
-                >
-                  fetch
-                </Button>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ color: "green", marginRight: "5px" }}>
-                    {selectedFileName}
-                  </span>
-                  <IconButton
-                    sx={{ width: "10px", height: "10px" }}
-                    onClick={clearFileSelection}
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                </Box>
-              </>
-            ) : null}
-          </>
-        ) : messages[messages.length - 1]?.text.toLowerCase() ===
-          "type your query".toLowerCase() ? (
-          <>
-            {input.length === 1 ? (
-              <Button onClick={handleSend} disabled={isBotLoading}>
-                <img
-                  src={sendButton}
-                  alt="send"
-                  style={{ width: "35px", height: "35px" }}
-                />
-              </Button>
-            ) : (
-              input.length > 1 && (
-                <Button
-                  onClick={() => handleSearch(input, userEmail)}
-                  disabled={isBotLoading}
-                >
-                  <img
-                    src={SearchIcon}
-                    alt="search"
-                    style={{ width: "35px", height: "35px" }}
-                  />
-                </Button>
-              )
-            )}
-          </>
-        ) : input.trim() ? (
-          <Button onClick={handleSend} disabled={isBotLoading}>
-            <img
-              src={sendButton}
-              alt="send"
-              style={{ width: "35px", height: "35px" }}
-            />
-          </Button>
-        ) : null} */}
       </Box>
-      {/* input user send stuct end */}
     </Box>
   );
 };
