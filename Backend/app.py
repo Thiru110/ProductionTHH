@@ -91,7 +91,7 @@ def generate_token(user):
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=12)
     }
     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
-    return token  # Directly return the token as string
+    return token.decode('utf-8')  # Directly return the token as string
 
 
 # *             USER SIGNUP API
