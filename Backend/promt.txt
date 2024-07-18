@@ -100,14 +100,14 @@ Relevant Experience = 19.37% ]
 
 
 Demo Answer :
-Relevant Experience : 19.37% , 
-Must have Experience = 55%, 
-Good to have Experience= 22.5%, 
+Relevant Experience = 19.37%
+Must have Experience = 55%
+Good to have Experience= 22.5%
 
 
 
 Test Question :{utemp_resume}
 Skills_required = {uskillset}
-above is a resume of a candidate i need the following informations from the above given resume namely  the Relevant Experience , must_have Experience , Good_to_have Experience of the candidate, along with the description of the scoring for each using the above mentioned skills:
+above is a resume of a candidate i need the following informations from the above given resume namely  the Relevant Experience , must_have Experience , Good_to_have Experience of the candidate using the above mentioned skills:
     
     Test Answer :""")

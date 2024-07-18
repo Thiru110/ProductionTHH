@@ -72,8 +72,16 @@ class UserInfo(db.Model):
     def __repr__(self):
         return f'<UserInfo {self.username}>'
     
-    #    JWT TOKEN GENERATE FUNCTION
-
+    # !     JWT TOKEN GENERATE FUNCTION
+# def generate_token(user):
+#     token = jwt.encode({
+#         'user_id': user.id,
+#         'username': user.username,
+#         'email': user.email,
+#         'role': user.Role,  # Include user's role
+#         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+#     }, app.config['SECRET_KEY'], algorithm='HS256')
+#     return token
 def generate_token(user):
     payload = {
         'user_id': user.id,
@@ -83,11 +91,34 @@ def generate_token(user):
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=12)
     }
     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
-    return token.decode('utf-8')  # Directly return the token as string
+    return token  # Directly return the token as string
 
 
-#            USER SIGNUP API
+# *             USER SIGNUP API
 
+# @app.route('/user/signup', methods=['POST'])
+# def signup():
+#     data = request.json
+#     username = data.get('username')
+#     email = data.get('email')
+#     password = data.get('password')
+    
+#     if not username or not email or not password:
+#         return jsonify({"error": "Missing username, email, or password"}), 400
+    
+#     if UserInfo.query.filter_by(username=username).first() is not None:
+#         return jsonify({"error": "Username already exists"}), 409
+    
+#     # Hash the password before storing it
+#     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+#     new_user = UserInfo(username=username, email=email, password=hashed_password,Role='user')
+#     db.session.add(new_user)
+#     db.session.commit()
+#     # !     TOKEN GENERATE
+#     token = generate_token(new_user)
+
+#     return jsonify({"message": "Success", "token": token}), 200
 @app.route('/user/signup', methods=['POST'])
 def signup():
     data = request.json
@@ -113,6 +144,25 @@ def signup():
     token = generate_token(new_user)
     return jsonify({"message": "Success", "token": token}), 200
 
+# !correct one
+# @app.route('/user/signin', methods=['POST'])
+# def signin():
+#     data = request.json
+#     username = data.get('username')
+#     password = data.get('password')
+    
+#     if not username or not password:
+#         return jsonify({"status": "Failure", "message": "Missing username or password"}), 400
+    
+#     user = UserInfo.query.filter_by(username=username).first()
+#     if not user:
+#         return jsonify({"status": "Failure", "message": "User not found"}), 404
+    
+#     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+#         token = generate_token(user)
+#         return jsonify({"status": "Success", "message": "Sign in successful", "token": token}), 200
+#     else:
+#         return jsonify({"status": "Failure", "message": "Invalid password"}), 401
     
 @app.route('/user/signin', methods=['POST'])
 def signin():
@@ -157,6 +207,33 @@ def forgot_password():
     
     return jsonify({"message": "Password updated successfully"}), 200
 
+# !correct one
+# @app.route('/user/auth', methods=['GET'])
+# def auth():
+#     auth_header = request.headers.get('Authorization')
+#     if auth_header:
+#         token = auth_header.split(" ")[1]
+#         try:
+#             decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+#             return jsonify({"status": "Success", "data": decoded}), 200
+#         except jwt.ExpiredSignatureError:
+#             return jsonify({"status": "Failure", "message": "Token expired"}), 401
+#         except jwt.InvalidTokenError:
+#             return jsonify({"status": "Failure", "message": "Invalid token"}), 401
+#     else:
+#         return jsonify({"status": "Failure", "message": "Token is missing"}), 401
+    
+# logging.basicConfig(level=logging.DEBUG)
+
+# try:
+#     with open(r'D:\THH\THH_File\Backend\conversation_tree.json', 'r') as file:
+#         conversation_tree = json.load(file)
+# except Exception as e:
+#     logging.error(f"Error loading conversation_tree.json: {e}")
+#     conversation_tree = {}
+
+# current_node = "start"
+
 @app.route('/user/auth', methods=['GET'])
 def auth():
     auth_header = request.headers.get('Authorization')
@@ -172,7 +249,58 @@ def auth():
     else:
         return jsonify({"status": "Failure", "message": "Token is missing"}), 401
 
-  
+# Logging setup
+# logging.basicConfig(level=logging.DEBUG)
+
+# try:
+#     with open(r'D:\THH\THH_File\Backend\conversation_tree.json', 'r') as file:
+#         conversation_tree = json.load(file)
+# except Exception as e:
+#     logging.error(f"Error loading conversation_tree.json: {e}")
+#     conversation_tree = {}
+
+# current_node = "start"
+
+
+# @app.route('/response', methods=['POST'])
+# def get_response():
+#     global current_node
+#     try:
+#         response_text = request.json.get('message')
+#         if not response_text:
+#             raise ValueError("No response message provided")
+
+#         logging.debug(f"Received message: {response_text}")
+
+#         if current_node in conversation_tree:
+#             options = conversation_tree[current_node][1]
+#             if response_text.lower() in options:
+#                 next_node = options[response_text.lower()]
+#                 if next_node is not None:
+#                     if next_node == "start":
+#                         current_node = "start"
+#                     elif next_node in ["e", "f"]:
+#                         current_node = next_node
+#                     else:
+#                         current_node = next_node
+#                     next_message = conversation_tree[current_node][0]
+#                 else:
+#                     current_node = "start"
+#                     next_message = "Your Folder Have been Successfully Uploaded Wait for Sometime While We Scrap The Finest Candidates...."
+#             elif current_node == "NLP":
+#                 next_message = chat_with_sql(response_text)
+#             else:
+#                 next_message = "Invalid response to continue \n A: Talent Resourcing \n B: Deep-Doc-Verify \n C: Link Extraction \n D: Chat with Database"
+#         else:
+#             next_message = "Invalid conversation node."
+
+#         logging.debug(f"Next message: {next_message}")
+#         return jsonify({'message': next_message})
+    
+#     except Exception as e:
+#         logging.error(f"Error processing response: {e}")
+#         return jsonify({"status":"Failiure",'message': str(e)}), 500
+    
 @app.route('/response', methods=['POST'])
 def get_response():
     global current_node

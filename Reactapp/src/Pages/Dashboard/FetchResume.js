@@ -422,8 +422,9 @@ const FetchResume = () => {
             <TableRow>
               <StyledTableCell align="center">Name</StyledTableCell>
               <StyledTableCell align="center">Email</StyledTableCell>
-              <StyledTableCell align="center">Contact</StyledTableCell>
-              <StyledTableCell align="center">Ranking&nbsp;(%)</StyledTableCell>
+              <StyledTableCell align="center">
+                Percentage&nbsp;(%)
+              </StyledTableCell>
               <StyledTableCell align="center" colSpan={2}>
                 Actions
               </StyledTableCell>
@@ -445,7 +446,6 @@ const FetchResume = () => {
                     {row.Name}
                   </StyledTableCell>
                   <StyledTableCell align="left">{row.Email}</StyledTableCell>
-                  <StyledTableCell align="left">{row.Mobile}</StyledTableCell>
                   <StyledTableCell align="left">
                     {row.Similarity}
                   </StyledTableCell>
@@ -530,7 +530,7 @@ const FetchResume = () => {
               ))
             ) : (
               <TableRow>
-                <StyledTableCell colSpan={7} align="center">
+                <StyledTableCell colSpan={6} align="center">
                   No data available
                 </StyledTableCell>
               </TableRow>
